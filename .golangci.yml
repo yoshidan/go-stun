@@ -1,0 +1,33 @@
+linters-settings:
+  govet:
+    check-shadowing: true
+  golint:
+    min-confidence: 0.9
+  misspell:
+    locale: US
+  dupl:
+    threshold: 200
+
+linters:
+  disable-all: true
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - structcheck
+    - varcheck
+    - ineffassign
+    - deadcode
+    - typecheck
+    - golint
+    - stylecheck
+    - gosec
+    - dupl
+    - gofmt
+    - goimports
+    - misspell
+    - unparam
+    - prealloc
+    - unconvert
