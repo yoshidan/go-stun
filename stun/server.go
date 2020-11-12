@@ -81,7 +81,8 @@ func (s *Server) ListenAndServe() error {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				header, err := NewMessage(buf[:n])
+				header := NewMessage(buf[:n])
+				err := header.ValidateAsBindingRequest()
 				if err != nil {
 					log.Println(err)
 					writeBuf := header.CreateErrorResponse()

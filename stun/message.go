@@ -72,23 +72,27 @@ type ErrorResponse struct {
 
 var nbo = binary.BigEndian
 
-func NewMessage(buffer []byte) (MessageHeader, error) {
+func NewMessage(buffer []byte) MessageHeader {
 	message := MessageHeader{
 		Type:        nbo.Uint16(buffer[0:2]),
 		Length:      nbo.Uint16(buffer[2:4]),
 		MagicCookie: nbo.Uint32(buffer[4:8]),
 	}
-	copy(message.TransactionID[:], buffer[8:20])
-	if message.Type != BindingRequest {
-		return message, errors.New("invalid message type")
+	copy(message.TransactionID[:], buffer[8:MessageHeaderLength])
+	return message
+}
+
+func (m *MessageHeader) ValidateAsBindingRequest() error {
+	if m.Type != BindingRequest {
+		return errors.New("invalid message type")
 	}
-	if message.Length != 0 {
-		return message, errors.New("body must be zero")
+	if m.Length != 0 {
+		return errors.New("body must be zero")
 	}
-	if message.MagicCookie != MagicCookie {
-		return message, errors.New("invalid magic cookie")
+	if m.MagicCookie != MagicCookie {
+		return errors.New("invalid magic cookie")
 	}
-	return message, nil
+	return nil
 }
 
 func (m *MessageHeader) CreateSuccessResponse(port uint16, address net.IP) []byte {
