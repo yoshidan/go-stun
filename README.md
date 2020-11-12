@@ -47,7 +47,7 @@ func keepalive() {
     result := client.Discover()         
 
     //reuse connection
-    result := client.Discover()         
+    result2 := client.Discover()         
 }
 ```
 
