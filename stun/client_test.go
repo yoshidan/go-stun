@@ -3,15 +3,14 @@ package stun
 import (
 	"context"
 	"log"
-	"net"
 	"testing"
 	"time"
 )
 
 func TestClientGoogleServer(t *testing.T) {
 
-	laddr, _ := net.ResolveUDPAddr("udp", ":50000")
-	client := NewClient(context.Background(), "stun.l.google.com:19302", laddr)
+	laddr := ":50000"
+	client := NewClient(context.Background(), "stun.l.google.com:19302", &laddr)
 	result := client.Discover()
 	if result.Error != nil {
 		t.Fatalf("%+v", result.Error)
@@ -28,6 +27,21 @@ func TestClientGoogleServer(t *testing.T) {
 	log.Print(result.Addr.IP.String())
 }
 
+func TestClientAutoLocalAddr(t *testing.T) {
+
+	client := NewClient(context.Background(), "stun.l.google.com:19302", nil)
+	result := client.Discover()
+	if result.Error != nil {
+		t.Fatalf("%+v", result.Error)
+		return
+	}
+	if result.Addr.IP.To4() == nil {
+		t.Fatalf("invalid address")
+		return
+	}
+	log.Print(result.Addr.String())
+}
+
 func TestClientV4(t *testing.T) {
 
 	server := NewServer(context.Background(), ":3478")
@@ -40,8 +54,8 @@ func TestClientV4(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	laddr, _ := net.ResolveUDPAddr("udp", "127.0.0.1:50000")
-	client := NewClient(context.Background(), ":3478", laddr)
+	laddr := "127.0.0.1:50000"
+	client := NewClient(context.Background(), ":3478", &laddr)
 	result := client.Discover()
 	if result.Error != nil {
 		t.Fatalf("%+v", result.Error)
@@ -70,8 +84,8 @@ func TestClientV6(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	laddr, _ := net.ResolveUDPAddr("udp", "[::1]:50000")
-	client := NewClient(context.Background(), ":3478", laddr)
+	laddr := "[::1]:50000"
+	client := NewClient(context.Background(), ":3478", &laddr)
 	result := client.Discover()
 	if result.Error != nil {
 		t.Fatalf("%+v", result.Error)
@@ -99,8 +113,8 @@ func TestClientKeepalive(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	laddr, _ := net.ResolveUDPAddr("udp", "127.0.0.1:50000")
-	client := NewClient(context.Background(), "127.0.0.1:3478", laddr)
+	laddr := "127.0.0.1:50000"
+	client := NewClient(context.Background(), "127.0.0.1:3478", &laddr)
 	err := client.Keepalive()
 	defer client.Close()
 	if err != nil {

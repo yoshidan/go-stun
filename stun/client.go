@@ -13,9 +13,10 @@ type Client struct {
 	Timeout time.Duration
 
 	serverAddr string
-	conn       *net.UDPConn
-	context    context.Context
-	localAddr  *net.UDPAddr
+	localAddr  *string
+
+	conn    *net.UDPConn
+	context context.Context
 }
 
 type Result struct {
@@ -25,7 +26,7 @@ type Result struct {
 
 // serverAddr is STUN server address.
 // If localAddr is nil, a local address is automatically chosen.
-func NewClient(ctx context.Context, serverAddr string, localAddr *net.UDPAddr) Client {
+func NewClient(ctx context.Context, serverAddr string, localAddr *string) Client {
 	return Client{
 		serverAddr: serverAddr,
 		context:    ctx,
@@ -127,11 +128,19 @@ func (c *Client) Discover() Result {
 }
 
 func (c *Client) dial() (*net.UDPConn, error) {
+	var localAddr *net.UDPAddr
+	if c.localAddr != nil {
+		var err error
+		localAddr, err = net.ResolveUDPAddr("udp", *c.localAddr)
+		if err != nil {
+			return nil, xerrors.Errorf("resolve error: %w", err)
+		}
+	}
 	serverAddr, err := net.ResolveUDPAddr("udp", c.serverAddr)
 	if err != nil {
 		return nil, xerrors.Errorf("resolve error: %w", err)
 	}
-	conn, err := net.DialUDP("udp", c.localAddr, serverAddr)
+	conn, err := net.DialUDP("udp", localAddr, serverAddr)
 	if err != nil {
 		return nil, xerrors.Errorf("listen error: %w", err)
 	}

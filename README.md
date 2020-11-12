@@ -31,13 +31,13 @@ import "github.com/yoshidan/go-stun/stun"
 
 // discover once
 func onetime() {
-    client := NewClient(context.Background(), "stun.l.google.com:19302", laddr)
+    client := NewClient(context.Background(), "stun.l.google.com:19302", nil)
     result := client.Discover()
 }
 
 // keep alive
 func keepalive() {
-    client := NewClient(context.Background(), "stun.l.google.com:19302", laddr)
+    client := NewClient(context.Background(), "stun.l.google.com:19302", nil)
     err := client.Keepalive()
     if err !=nil {
         // handle err
