@@ -32,7 +32,7 @@ import "github.com/yoshidan/go-stun/stun"
 // discover once
 func onetime() {
     client := stun.NewClient(context.Background(), "stun.l.google.com:19302", nil)
-    result := client.Discover()
+    addr, err := client.Discover()
 }
 
 // keep alive
