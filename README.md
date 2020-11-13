@@ -44,10 +44,10 @@ func keepalive() {
     }
     defer client.Close()
 
-    result := client.Discover()         
+    addr, err := client.Discover()         
 
     //reuse connection
-    result2 := client.Discover()         
+    addr2, err2 := client.Discover()         
 }
 ```
 

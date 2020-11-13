@@ -52,13 +52,13 @@ func (c *Client) Close() {
 }
 
 // Discover external ip address and port
-func (c *Client) Discover() Result {
+func (c *Client) Discover() (net.UDPAddr, error) {
 	conn := c.conn
 	if conn == nil {
 		var err error
 		conn, err = c.dial()
 		if err != nil {
-			return c.error(err)
+			return net.UDPAddr{}, err
 		}
 		defer conn.Close()
 	}
@@ -122,9 +122,9 @@ func (c *Client) Discover() Result {
 	result := <-ch
 	if err != nil {
 		// write error
-		return c.error(xerrors.Errorf("sending error: %w", err))
+		return net.UDPAddr{}, xerrors.Errorf("sending error: %w", err)
 	}
-	return result
+	return result.Addr, result.Error
 }
 
 func (c *Client) dial() (*net.UDPConn, error) {

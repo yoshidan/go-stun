@@ -11,35 +11,35 @@ func TestClientGoogleServer(t *testing.T) {
 
 	laddr := ":50000"
 	client := NewClient(context.Background(), "stun.l.google.com:19302", &laddr)
-	result := client.Discover()
-	if result.Error != nil {
-		t.Fatalf("%+v", result.Error)
+	addr, err := client.Discover()
+	if err != nil {
+		t.Fatalf("%+v", err)
 		return
 	}
-	if result.Addr.Port != 50000 {
+	if addr.Port != 50000 {
 		t.Fatal("invalid port ")
 		return
 	}
-	if result.Addr.IP.To4() == nil {
+	if addr.IP.To4() == nil {
 		t.Fatalf("invalid address")
 		return
 	}
-	log.Print(result.Addr.IP.String())
+	log.Print(addr.IP.String())
 }
 
 func TestClientAutoLocalAddr(t *testing.T) {
 
 	client := NewClient(context.Background(), "stun.l.google.com:19302", nil)
-	result := client.Discover()
-	if result.Error != nil {
-		t.Fatalf("%+v", result.Error)
+	addr, err := client.Discover()
+	if err != nil {
+		t.Fatalf("%+v", err)
 		return
 	}
-	if result.Addr.IP.To4() == nil {
+	if addr.IP.To4() == nil {
 		t.Fatalf("invalid address")
 		return
 	}
-	log.Print(result.Addr.String())
+	log.Print(addr.String())
 }
 
 func TestClientV4(t *testing.T) {
@@ -56,17 +56,17 @@ func TestClientV4(t *testing.T) {
 
 	laddr := "127.0.0.1:50000"
 	client := NewClient(context.Background(), ":3478", &laddr)
-	result := client.Discover()
-	if result.Error != nil {
-		t.Fatalf("%+v", result.Error)
+	addr, err := client.Discover()
+	if err != nil {
+		t.Fatalf("%+v", err)
 		return
 	}
-	if result.Addr.Port != 50000 {
+	if addr.Port != 50000 {
 		t.Fatal("invalid port ")
 		return
 	}
-	if result.Addr.IP.String() != "127.0.0.1" {
-		t.Fatalf("invalid address: actual=%s", result.Addr.IP.String())
+	if addr.IP.String() != "127.0.0.1" {
+		t.Fatalf("invalid address: actual=%s", addr.IP.String())
 		return
 	}
 
@@ -86,17 +86,17 @@ func TestClientV6(t *testing.T) {
 
 	laddr := "[::1]:50000"
 	client := NewClient(context.Background(), ":3478", &laddr)
-	result := client.Discover()
-	if result.Error != nil {
-		t.Fatalf("%+v", result.Error)
+	addr, err := client.Discover()
+	if err != nil {
+		t.Fatalf("%+v", err)
 		return
 	}
-	if result.Addr.Port != 50000 {
+	if addr.Port != 50000 {
 		t.Fatal("invalid port ")
 		return
 	}
-	if result.Addr.IP.String() != "::1" {
-		t.Fatalf("invalid address: actual=%s", result.Addr.IP.String())
+	if addr.IP.String() != "::1" {
+		t.Fatalf("invalid address: actual=%s", addr.IP.String())
 		return
 	}
 }
@@ -123,17 +123,17 @@ func TestClientKeepalive(t *testing.T) {
 	}
 
 	discover := func() {
-		result := client.Discover()
-		if result.Error != nil {
-			t.Fatalf("%+v", result.Error)
+		addr, err := client.Discover()
+		if err != nil {
+			t.Fatalf("%+v", err)
 			return
 		}
-		if result.Addr.Port != 50000 {
+		if addr.Port != 50000 {
 			t.Fatal("invalid port ")
 			return
 		}
-		if result.Addr.IP.String() != "127.0.0.1" {
-			t.Fatalf("invalid address: actual=%s", result.Addr.IP.String())
+		if addr.IP.String() != "127.0.0.1" {
+			t.Fatalf("invalid address: actual=%s", addr.IP.String())
 			return
 		}
 	}
